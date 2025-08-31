@@ -1,0 +1,26 @@
+name: Build and Deploy gifmachine App with Terraform
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.4.5
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install --jobs 4 --retry 3
+
+      - name: Run tests
+        run: bundle exec rake test
+        
