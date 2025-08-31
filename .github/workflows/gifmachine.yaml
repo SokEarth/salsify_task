@@ -12,6 +12,8 @@ jobs:
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.PASSWORD }}
       DB_HOST: ${{ secrets.DB_HOST }}
+      ADAPTER: ${{ secrets.ADAPTER }}
+      DATABASE": ${{ secrets.DATABASE" }}
 
     steps:
       - name: Checkout repo
