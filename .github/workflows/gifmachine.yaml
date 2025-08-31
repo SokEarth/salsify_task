@@ -13,7 +13,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.PASSWORD }}
       DB_HOST: ${{ secrets.DB_HOST }}
       ADAPTER: ${{ secrets.ADAPTER }}
-      DATABASE: ${{ secrets.DATABASE" }}
+      DATABASE: ${{ secrets.DATABASE }}
 
     steps:
       - name: Checkout repo
