@@ -105,9 +105,9 @@ module "rds" {
   identifier = "${var.cluster_name}-rds"
   engine = "postgres"
   engine_version = "15.6"
-  instance_type = "db.t3.medium"
+  instance_class = "db.t3.medium"
   allocated_storage = 20
-  name = "appdb"
+  db_name = "appdb"
   username = var.rds_username
   password = var.rds_password
   multi_az = true
