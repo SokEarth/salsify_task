@@ -77,7 +77,7 @@ jobs:
           aws-region: eu-north-1
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -upgrade
         working-directory: terraform   # path where your .tf files are
 
       # Terraform Plan
