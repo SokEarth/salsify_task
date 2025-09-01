@@ -97,45 +97,45 @@ resource "aws_ecr_repository" "app-ecr" {
 #   }
 # }
 
-# # RDS PostgreSQL (terraform-aws-modules/rds/aws)
+# RDS PostgreSQL (terraform-aws-modules/rds/aws)
 
-# module "rds" {
-#   source = "terraform-aws-modules/rds/aws"
-#   version = ">= 7.0.0"
-#   identifier = "${var.cluster_name}-rds"
-#   engine = "postgres"
-#   engine_version = "15.6"
-#   instance_type = "db.t3.medium"
-#   allocated_storage = 20
-#   name = "appdb"
-#   username = var.rds_username
-#   password = var.rds_password
-#   multi_az = true
-#   subnet_ids = module.vpc.database_subnets
-#   vpc_security_group_ids = [module.vpc.default_security_group_id]
-#   maintenance_window = "Mon:00:00-Mon:03:00"
-#   skip_final_snapshot = true
-#   tags = {
-#     Name = "${var.cluster_name}-rds"
-#   }
-# }
+module "rds" {
+  source = "terraform-aws-modules/rds/aws"
+  version = ">= 7.0.0"
+  identifier = "${var.cluster_name}-rds"
+  engine = "postgres"
+  engine_version = "15.6"
+  instance_type = "db.t3.medium"
+  allocated_storage = 20
+  name = "appdb"
+  username = var.rds_username
+  password = var.rds_password
+  multi_az = true
+  subnet_ids = module.vpc.database_subnets
+  vpc_security_group_ids = [module.vpc.default_security_group_id]
+  maintenance_window = "Mon:00:00-Mon:03:00"
+  skip_final_snapshot = true
+  tags = {
+    Name = "${var.cluster_name}-rds"
+  }
+}
 
-# # Security groups adjustments (allow EKS SG -> RDS)
+# Security groups adjustments (allow EKS SG -> RDS)
 
-# # get EKS worker security group (created by module)
-# data "aws_security_group" "eks_nodes_sg" {
-#   id = module.eks.node_security_group_id
-# }
-# # Allow RDS to accept from EKS nodes SG
-# resource "aws_security_group_rule" "rds_allow_from_eks" {
-#   description = "Allow Postgres from EKS nodes"
-#   type = "ingress"
-#   from_port = 5432
-#   to_port = 5432
-#   protocol = "tcp"
-#   security_group_id = module.rds.security_group_id
-#   source_security_group_id = data.aws_security_group.eks_nodes_sg.id
-# }
+# get EKS worker security group (created by module)
+data "aws_security_group" "eks_nodes_sg" {
+  id = module.eks.node_security_group_id
+}
+# Allow RDS to accept from EKS nodes SG
+resource "aws_security_group_rule" "rds_allow_from_eks" {
+  description = "Allow Postgres from EKS nodes"
+  type = "ingress"
+  from_port = 5432
+  to_port = 5432
+  protocol = "tcp"
+  security_group_id = module.rds.security_group_id
+  source_security_group_id = data.aws_security_group.eks_nodes_sg.id
+}
 
 # # Outputs
 
