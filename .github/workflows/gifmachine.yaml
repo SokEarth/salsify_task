@@ -56,7 +56,7 @@ jobs:
             pool: 5
             username: postgres
             password: postgres
-            host: postgres
+            host: localhost
 
           development:
             <<: *default
