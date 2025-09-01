@@ -52,7 +52,7 @@ variable "rds_username" {
 
 variable "family" {
   type = string
-  default = null
+  default = "postgres14"
 }
 
 variable "rds_password" {
