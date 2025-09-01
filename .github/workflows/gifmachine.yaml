@@ -46,8 +46,8 @@ jobs:
             adapter: postgresql
             encoding: unicode
             pool: 5
-            username: ${{ secrets.DB_USERNAME }}
-            password: ${{ secrets.DB_PASSWORD }}
+            username: "${{ secrets.DB_USERNAME }}"
+            password: "${{ secrets.DB_PASSWORD }}"
             host: localhost
 
           development:
