@@ -115,6 +115,7 @@ module "rds" {
   vpc_security_group_ids = [module.vpc.default_security_group_id]
   maintenance_window = "Mon:00:00-Mon:03:00"
   skip_final_snapshot = true
+  family = null
   tags = {
     Name = "${var.cluster_name}-rds"
   }
