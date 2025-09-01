@@ -3,17 +3,17 @@ default: &default
   encoding: unicode
   host: <%= ENV['DB_HOST'] || 'localhost' %>
   username: <%= ENV['DB_USERNAME'] || 'postgres' %>
-  password: <%= ENV['DB_PASSWORD'] || '' %>
+  password: <%= ENV['DB_PASSWORD'] || 'mypswd' %>
   pool: 5
   
 production:
   <<: *default
-  database: <%= ENV["DATABASE"] %>
+  database: <%= ENV["DATABASE"] || 'postgres' %>
 
 development:
   <<: *default
-  database: <%= ENV["DATABASE"] %>
+  database: <%= ENV["DATABASE"] || 'postgres' %>
 
 test:
   <<: *default
-  database: <%= ENV["DATABASE"] %>
+  database: <%= ENV["DATABASE"]  || 'postgres' %>
