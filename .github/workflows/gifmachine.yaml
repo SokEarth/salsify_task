@@ -45,8 +45,36 @@ jobs:
         working-directory: gifmachine
         run: bundle install
 
-      - name: Setup database
-        working-directory: gifmachine
+      - name: Create database.yml
+        run: |
+          mkdir -p config
+          cat > config/database.yml <<EOL
+          default: &default
+            adapter: postgresql
+            encoding: unicode
+            pool: 5
+            username: postgres
+            password: postgres
+            host: postgres
+
+          development:
+            <<: *default
+            database: gifmachine_dev
+
+          test:
+            <<: *default
+            database: gifmachine_test
+          EOL
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..10}; do
+            pg_isready -h postgres -U ${{ secrets.DB_USERNAME }} && break
+            echo "Waiting for postgres..."
+            sleep 3
+          done
+
+      - name: Prepare DB
         run: |
           bundle exec rake db:create
           bundle exec rake db:migrate
