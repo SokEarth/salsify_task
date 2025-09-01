@@ -22,14 +22,7 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-    env:
-      DB_ADAPTER: postgresql
-      DB_USERNAME: runner
-      DB_PASSWORD: runner
-      DB_HOST:  localhost
-      DB_NAME: gifmachine_test
-      RACK_ENV: test
-
+          
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
