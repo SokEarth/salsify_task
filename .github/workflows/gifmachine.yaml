@@ -38,6 +38,7 @@ jobs:
         run: bundle install
 
       - name: Create database.yml
+        working-directory: gifmachine
         run: |
           mkdir -p config
           cat > config/database.yml <<EOL
