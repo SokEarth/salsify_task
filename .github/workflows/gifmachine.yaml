@@ -52,7 +52,7 @@ jobs:
 
           development:
             <<: *default
-            database: gifmachine
+            database: postgres
           EOL
 
       - name: Setup database
