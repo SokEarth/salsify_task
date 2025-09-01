@@ -47,7 +47,9 @@ jobs:
 
       - name: Setup database
         working-directory: gifmachine
-        run: bundle install
+        run: |
+          bundle exec rake db:create
+          bundle exec rake db:migrate
 
       - name: Run tests
         working-directory: gifmachine
