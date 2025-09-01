@@ -7,6 +7,14 @@ terraform {
   }
 
   required_version = "~> 1.13.1"
+  
+  backend "s3" {
+    bucket         = "my-salsify-state-bucket"
+    key            = "global/s3/terraform.tfstate"  # folder/key for your state file
+    region         = "eu-west-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
