@@ -101,7 +101,7 @@ resource "aws_ecr_repository" "app-ecr" {
 
 module "rds" {
   source = "terraform-aws-modules/rds/aws"
-  version = ">= 7.0.0"
+  version = ">=  6.12.0"
   identifier = "${var.cluster_name}-rds"
   engine = "postgres"
   engine_version = "15.6"
