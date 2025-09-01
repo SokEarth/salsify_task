@@ -59,7 +59,7 @@ module "vpc" {
 
 resource "aws_ecr_repository" "app-ecr" {
   name = "${var.cluster_name}-repo"
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = "IMMUTABLE"
 }
 
 # # EKS Cluster (terraform-aws-modules/eks)
