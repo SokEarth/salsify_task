@@ -112,7 +112,7 @@ module "rds" {
   password = var.rds_password
   multi_az = true
   subnet_ids = module.vpc.database_subnets
-  vpc_security_group_ids = [module.vpc.default_security_group_id]
+  vpc_security_group_ids = [module.vpc.aws_default_security_group]
   maintenance_window = "Mon:00:00-Mon:03:00"
   skip_final_snapshot = true
   family = var.family
