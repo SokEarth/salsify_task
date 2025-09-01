@@ -8,7 +8,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-
+    environment: gifmachine
     services:
       postgres:
         image: postgres:15
@@ -92,6 +92,7 @@ jobs:
 
   containerize:
     runs-on: ubuntu-latest
+    environment: gifmachine
 
     services:
       postgres:
@@ -106,16 +107,12 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
-    env:
-     RACK_ENV: development
-     GIFMACHINE_PASSWORD: foo
           
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      - name: Build Docker image and push to ecr
         working-directory: gifmachine
         run: |
           IMAGE_TAG=${{ github.sha }}
