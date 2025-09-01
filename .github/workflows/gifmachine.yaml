@@ -13,24 +13,16 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: runner
-          POSTGRES_PASSWORD: runner
-          POSTGRES_DB: gifmachine_test
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: gifmachine
         ports: ['5432:5432']
         options: >-
           --health-cmd="pg_isready -U runner"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-
-    env:
-      DB_ADAPTER: postgresql
-      DB_USERNAME: runner
-      DB_PASSWORD: runner
-      DB_HOST:  localhost
-      DB_NAME: gifmachine_test
-      RACK_ENV: test
-
+          
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -44,6 +36,31 @@ jobs:
       - name: Install dependencies
         working-directory: gifmachine
         run: bundle install
+
+      - name: Create database.yml
+        run: |
+          mkdir -p config
+          cat > config/database.yml <<EOL
+          default: &default
+            adapter: postgresql
+            encoding: unicode
+            pool: 5
+            username: ${{ secrets.DB_USERNAME }}
+            password: ${{ secrets.DB_PASSWORD }}
+            host: postgres
+
+          development:
+            <<: *default
+            database: gifmachine
+
+          test:
+            <<: *default
+            database: gifmachine
+            
+          production:
+            <<: *default
+            database: gifmachine
+          EOL
 
       - name: Setup database
         working-directory: gifmachine
