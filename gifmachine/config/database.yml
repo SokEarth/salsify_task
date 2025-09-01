@@ -7,4 +7,11 @@ default: &default
 production:
   <<: *default
   database: <%= ENV["DATABASE"] %>
-  
+
+development:
+  <<: *default
+  database: <%= ENV["DATABASE"] %>
+
+test:
+  <<: *default
+  database: <%= ENV["DATABASE"] %>
