@@ -104,7 +104,7 @@ module "rds" {
   version = ">=  6.12.0"
   identifier = "${var.cluster_name}-rds"
   engine = "postgres"
-  engine_version = "15.6"
+  engine_version = "15"
   instance_class = "db.t3.medium"
   allocated_storage = 20
   db_name = "appdb"
