@@ -99,6 +99,28 @@ resource "aws_ecr_repository" "app-ecr" {
 
 # RDS PostgreSQL (terraform-aws-modules/rds/aws)
 
+module "rds" {
+  source = "terraform-aws-modules/rds/aws"
+  version = ">=  6.12.0"
+  identifier = "${var.cluster_name}-rds"
+  engine = "postgres"
+  engine_version = "15"
+  instance_class = "db.t3.medium"
+  allocated_storage = 20
+  db_name = "appdb"
+  username = var.rds_username
+  password = var.rds_password
+  multi_az = true
+  subnet_ids = module.vpc.database_subnets
+  vpc_security_group_ids = [module.vpc.default_security_group_id]
+  maintenance_window = "Mon:00:00-Mon:03:00"
+  skip_final_snapshot = true
+  family = var.family
+  tags = {
+    Name = "${var.cluster_name}-rds"
+  }
+}
+
 # Security groups adjustments (allow EKS SG -> RDS)
 
 # # get EKS worker security group (created by module)
@@ -118,7 +140,7 @@ resource "aws_ecr_repository" "app-ecr" {
 
 # # Outputs
 
-output "vpc_id" {value = module.vpc.vpc_id}
+output "vpc_id" {value = module.vpc.default_security_group_id}
 # output "eks_cluster_name" {value = module.eks.cluster_id}
 # output "eks_cluster_endpoint" {value = module.eks.cluster_endpoint}
 # output "rds_endpoint" {value = module.rds.address}
