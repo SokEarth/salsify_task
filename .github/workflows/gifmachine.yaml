@@ -47,7 +47,7 @@ jobs:
             encoding: unicode
             pool: 5
             username: postgres
-            password: mydbpasswd
+            password: postgres
             host: localhost
 
           development:
