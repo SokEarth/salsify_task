@@ -112,7 +112,7 @@ module "rds" {
   password = var.rds_password
   multi_az = true
   subnet_ids = module.vpc.database_subnets
-  vpc_security_group_ids = [module.vpc.aws_default_security_group]
+  vpc_security_group_ids = [module.vpc.default_security_group_name]
   maintenance_window = "Mon:00:00-Mon:03:00"
   skip_final_snapshot = true
   family = var.family
@@ -140,7 +140,7 @@ module "rds" {
 
 # # Outputs
 
-output "vpc_id" {value = module.vpc}
+# output "vpc_id" {value = module.vpc}
 # output "eks_cluster_name" {value = module.eks.cluster_id}
 # output "eks_cluster_endpoint" {value = module.eks.cluster_endpoint}
 # output "rds_endpoint" {value = module.rds.address}
