@@ -46,19 +46,11 @@ jobs:
             adapter: postgresql
             encoding: unicode
             pool: 5
-            username: "${{ secrets.DB_USERNAME }}"
-            password: "${{ secrets.DB_PASSWORD }}"
+            username: postgres
+            password: mydbpasswd
             host: localhost
 
           development:
-            <<: *default
-            database: gifmachine
-
-          test:
-            <<: *default
-            database: gifmachine
-            
-          production:
             <<: *default
             database: gifmachine
           EOL
