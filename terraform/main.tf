@@ -10,7 +10,7 @@ terraform {
   
   backend "s3" {
     bucket         = "my-salsify-state-bucket"
-    key            = "global/s3/terraform.tfstate"  # folder/key for your state file
+    key            = "global/s3/terraform.tfstate"
     region         = "eu-west-1"
     dynamodb_table = "terraform-locks"
     encrypt        = true

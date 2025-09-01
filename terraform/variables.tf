@@ -7,7 +7,7 @@ variable "aws_region" {
 variable "cluster_name" {
   description = "EKS cluster name"
   type = string
-  default = "demo-eks"
+  default = "salsify-task"
 }
 
 variable "vpc_cidr" {

@@ -22,15 +22,6 @@ module "vpc" {
 
 # # VPC Endpoints (PrivateLink / Gateway)
 
-# # S3 Gateway Endpoint (gateway type)
-# resource "aws_vpc_endpoint" "s3" {
-#   vpc_id = module.vpc.vpc_id
-#   service_name = "com.amazonaws.${var.aws_region}.s3"
-#   route_table_ids = module.vpc.public_route_table_ids
-#   vpc_endpoint_type = "Gateway"
-#   tags = { Name = "${var.cluster_name}-s3-vpce" }
-# }
-
 # # ECR API (interface)
 # resource "aws_vpc_endpoint" "ecr_api" {
 #   vpc_id = module.vpc.vpc_id
@@ -64,57 +55,14 @@ module "vpc" {
 #   tags = { Name = "${var.cluster_name}-sts-vpce" }
 # }
 
-# # ECR repo + S3 bucket
+# ECR repo
 
+resource "aws_ecr_repository" "app-ecr" {
+  name = "${var.cluster_name}-repo"
+  image_tag_mutability = "MUTABLE"
+}
 
-# resource "aws_ecr_repository" "app" {
-#   name = "${var.cluster_name}-repo"
-#   image_tag_mutability = "MUTABLE"
-# }
-
-# resource "aws_s3_bucket" "secrets" {
-#   bucket = "${var.cluster_name}-secrets-bucket"
-#   acl = "private"
-#   versioning {
-#     enabled = true
-#   }
-#   tags = {
-#     Name = "${var.cluster_name}-secrets"
-#   }
-# }
-
-# # restrict S3 access to requests from this VPC endpoint
-# data "aws_iam_policy_document" "s3_vpce_policy" {
-#   statement {
-#     sid = "AllowVPCEOnly"
-#     effect = "Deny"
-#     actions = ["s3:*"]
-#     resources = [
-#       aws_s3_bucket.secrets.arn,
-#       "${aws_s3_bucket.secrets.arn}/*"
-#     ]
-    
-#     condition {
-#       test = "StringNotEquals"
-#       variable = "aws:sourceVpce"
-#       values = [aws_vpc_endpoint.s3.id]
-#     }
-
-#     principals {
-#       type = "AWS"
-#       identifiers = ["*"]
-#     }
-#   }
-# }
-
-# resource "aws_s3_bucket_policy" "secrets_policy" {
-#   bucket = aws_s3_bucket.secrets.id
-#   policy = data.aws_iam_policy_document.s3_vpce_policy.json
-# }
-
-# ##################################################
 # # EKS Cluster (terraform-aws-modules/eks)
-# ##################################################
 
 # module "eks" {
 #   source = "terraform-aws-modules/eks/aws" 
@@ -149,58 +97,8 @@ module "vpc" {
 #   }
 # }
 
-# ##################################################
-# # IAM Role for pod to access S3 (IRSA example)
-# # Create a Kubernetes service account with an IAM role that grants read access to the secrets S3 prefix
-# ##################################################
-
-# data "aws_iam_policy_document" "sa_s3_read" {
-#   statement {
-#     effect = "Allow"
-#     actions = [
-#       "s3:GetObject",
-#       "s3:ListBucket"
-#     ]
-    
-#     resources = [
-#       aws_s3_bucket.secrets.arn,
-#       "${aws_s3_bucket.secrets.arn}/*"
-#       ]
-#   }
-# }
-
-# resource "aws_iam_role" "irsa_sa_role" {
-#   name = "${var.cluster_name}-sa-s3-role"
-#   assume_role_policy = data.aws_iam_policy_document.irsa_assume_role.json
-#   tags = { Name = "${var.cluster_name}-irsa-sa" }
-# }
-
-# data "aws_iam_policy_document" "irsa_assume_role" {
-#   statement {
-#     effect = "Allow"
-#     principals {
-#       type = "Federated"
-#       identifiers = [module.eks.oidc_provider_arn]
-#     }
-#     actions = ["sts:AssumeRoleWithWebIdentity"]
-#     condition {
-#       test = "StringEquals"
-#       variable = "${replace(replace(module.eks.cluster_oidc_issuer, "https://", ""), ":", "_")}:sub"
-#       values = ["system:serviceaccount:default:app-sa"]
-#     }
-#   }
-# }
-
-# resource "aws_iam_role_policy" "irsa_sa_policy" {
-#   role = aws_iam_role.irsa_sa_role.id
-#   policy = data.aws_iam_policy_document.sa_s3_read.json
-# }
-
-# # Note: Create Kubernetes service account that references this role with the eks module# Many prefer to use module.eks.kubernetes_service_accounts or `kubernetes_service_account` after kubeconfig is available.
-# ##################################################
 # # RDS PostgreSQL (terraform-aws-modules/rds/aws)
-# ##################################################
-# -----------------------------------
+
 # module "rds" {
 #   source = "terraform-aws-modules/rds/aws"
 #   version = ">= 7.0.0"
@@ -222,9 +120,8 @@ module "vpc" {
 #   }
 # }
 
-# ##################################################
 # # Security groups adjustments (allow EKS SG -> RDS)
-# ##################################################
+
 # # get EKS worker security group (created by module)
 # data "aws_security_group" "eks_nodes_sg" {
 #   id = module.eks.node_security_group_id
@@ -240,13 +137,11 @@ module "vpc" {
 #   source_security_group_id = data.aws_security_group.eks_nodes_sg.id
 # }
 
-# ##################################################
 # # Outputs
-# ##################################################
 
 # output "vpc_id" {value = module.vpc.vpc_id}
 # output "eks_cluster_name" {value = module.eks.cluster_id}
 # output "eks_cluster_endpoint" {value = module.eks.cluster_endpoint}
 # output "rds_endpoint" {value = module.rds.address}
 # output "s3_bucket" {value = aws_s3_bucket.secrets.bucket}
-# output "ecr_repo" {value = aws_ecr_repository.app.repository_url}
+# output "ecr_repo" {value = aws_ecr_repository.app-ecr.repository_url}
