@@ -50,7 +50,7 @@ variable "rds_username" {
   default = "appuser"
 }
 
-variable "node_desired_capacity" {
+variable "family" {
   type = string
   default = null
 }
