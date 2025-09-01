@@ -66,6 +66,10 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
+    env:
+     RACK_ENV: development
+     GIFMACHINE_PASSWORD: foo
           
     steps:
       - name: Checkout repo
@@ -76,8 +80,4 @@ jobs:
         run: |
           IMAGE_TAG=${{ github.sha }}
           docker build -t gifmachine:$IMAGE_TAG .
-
-      - name: Build Docker image
-        working-directory: gifmachine
-        run: |
-          docker run --rm myapp bundle exec rake db:migrate
+          docker run -e $RACK_ENV -e $GIFMACHINE_PASSWORD --rm myapp bundle exec rake db:migrate
