@@ -50,6 +50,11 @@ variable "rds_username" {
   default = "appuser"
 }
 
+variable "node_desired_capacity" {
+  type = string
+  default = null
+}
+
 variable "rds_password" {
   type = string
   default = "ChangeMe123!" # replace with secure secret or pass via -var-file or secrets manager
