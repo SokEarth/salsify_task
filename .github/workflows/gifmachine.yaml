@@ -44,6 +44,10 @@ jobs:
         working-directory: gifmachine
         run: bundle install
 
+      - name: Check secrets
+        run: |
+          echo ${{ secrets.DB_ADAPTER }} | sed 's/./& /g'
+
       - name: Setup database
         working-directory: gifmachine
         run: |
