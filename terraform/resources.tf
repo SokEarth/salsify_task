@@ -94,8 +94,8 @@ resource "aws_ecr_repository" "app-ecr" {
 # # EKS Cluster (terraform-aws-modules/eks)
 
 module "eks" {
-  source = "terraform-aws-modules/eks/aws" 
-  version = ">= 19.0.0"
+  source = "terraform-aws-modules/eks/aws"
+  version = "~> 21.0"
   name = var.cluster_name
   kubernetes_version = "1.33"
   vpc_id = module.vpc.vpc_id
