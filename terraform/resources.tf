@@ -102,7 +102,7 @@ module "eks" {
   subnet_ids = module.vpc.private_subnets
   eks_managed_node_groups = {
    task_node = {
-     instance_types = ["t3.medium"]
+     instance_types = ["t3.micro"]
      min_size       = 1
      max_size       = 3
      desired_size   = 2
