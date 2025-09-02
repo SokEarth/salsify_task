@@ -154,19 +154,19 @@ module "rds" {
 # Security groups adjustments (allow EKS SG -> RDS)
 
 # get EKS worker security group (created by module)
-data "aws_security_group" "eks_nodes_sg" {
-  id = module.eks.node_security_group_id
-}
-# Allow RDS to accept from EKS nodes SG
-resource "aws_security_group_rule" "rds_allow_from_eks" {
-  description = "Allow Postgres from EKS nodes"
-  type = "ingress"
-  from_port = 5432
-  to_port = 5432
-  protocol = "tcp"
-  security_group_id = module.rds.security_group_id
-  source_security_group_id = data.aws_security_group.eks_nodes_sg.id
-}
+# data "aws_security_group" "eks_nodes_sg" {
+#   id = module.eks.node_security_group_id
+# }
+# # Allow RDS to accept from EKS nodes SG
+# resource "aws_security_group_rule" "rds_allow_from_eks" {
+#   description = "Allow Postgres from EKS nodes"
+#   type = "ingress"
+#   from_port = 5432
+#   to_port = 5432
+#   protocol = "tcp"
+#   security_group_id = module.rds.security_group_id
+#   source_security_group_id = data.aws_security_group.eks_nodes_sg.id
+# }
 
 # Outputs
 
