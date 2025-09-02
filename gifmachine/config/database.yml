@@ -8,4 +8,4 @@ default: &default
 
 production:
   <<: *default
-  database: <%= ENV["DATABASE"] %>
+  database: 'postgres'
