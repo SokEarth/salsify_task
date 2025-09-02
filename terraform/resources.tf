@@ -40,6 +40,15 @@ resource "aws_security_group" "rds_sg" {
   }
 }
 
+resource "aws_db_subnet_group" "db_group" {
+  name       = "salsify-task-db-subnet-group"
+  subnet_ids = module.vpc.database_subnets
+
+  tags = {
+    Name = "salsify-task-db-subnet-group"
+  }
+}
+
 # # VPC Endpoints (PrivateLink / Gateway)
 
 # # ECR API (interface)
@@ -132,6 +141,7 @@ module "rds" {
   password = var.rds_password
   multi_az = true
   subnet_ids = module.vpc.database_subnets
+  db_subnet_group_name   = aws_db_subnet_group.db_group.name
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   maintenance_window = "Mon:00:00-Mon:03:00"
   skip_final_snapshot = true
