@@ -49,40 +49,40 @@ resource "aws_db_subnet_group" "db_group" {
   }
 }
 
-# # VPC Endpoints (PrivateLink / Gateway)
+# VPC Endpoints (PrivateLink / Gateway)
 
-# # ECR API (interface)
-# resource "aws_vpc_endpoint" "ecr_api" {
-#   vpc_id = module.vpc.vpc_id
-#   service_name = "com.amazonaws.${var.aws_region}.ecr.api"
-#   vpc_endpoint_type = "Interface"
-#   subnet_ids = module.vpc.private_subnets
-#   security_group_ids = [module.vpc.default_security_group_id]
-#   private_dns_enabled = true
-#   tags = { Name = "${var.cluster_name}-ecr-api-vpce" }
-# }
+# ECR API (interface)
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id = module.vpc.vpc_id
+  service_name = "com.amazonaws.${var.aws_region}.ecr.api"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = module.vpc.private_subnets
+  security_group_ids = [module.vpc.default_security_group_id]
+  private_dns_enabled = true
+  tags = { Name = "${var.cluster_name}-ecr-api-vpce" }
+}
 
-# # ECR DKR (interface) — container registry layer pulls rely on this + S3
-# resource "aws_vpc_endpoint" "ecr_dkr" {
-#   vpc_id = module.vpc.vpc_id
-#   service_name = "com.amazonaws.${var.aws_region}.ecr.dkr"
-#   vpc_endpoint_type = "Interface"
-#   subnet_ids = module.vpc.private_subnets
-#   security_group_ids = [module.vpc.default_security_group_id]
-#   private_dns_enabled = true
-#   tags = { Name = "${var.cluster_name}-ecr-dkr-vpce" }
-# }
+# ECR DKR (interface) — container registry layer pulls rely on this + S3
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id = module.vpc.vpc_id
+  service_name = "com.amazonaws.${var.aws_region}.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = module.vpc.private_subnets
+  security_group_ids = [module.vpc.default_security_group_id]
+  private_dns_enabled = true
+  tags = { Name = "${var.cluster_name}-ecr-dkr-vpce" }
+}
 
-# # STS endpoint (useful for IRSA authentication)
-# resource "aws_vpc_endpoint" "sts" {
-#   vpc_id = module.vpc.vpc_id
-#   service_name = "com.amazonaws.${var.aws_region}.sts"
-#   vpc_endpoint_type = "Interface"
-#   subnet_ids = module.vpc.private_subnets
-#   security_group_ids = [module.vpc.default_security_group_id]
-#   private_dns_enabled = true
-#   tags = { Name = "${var.cluster_name}-sts-vpce" }
-# }
+# STS endpoint (useful for IRSA authentication)
+resource "aws_vpc_endpoint" "sts" {
+  vpc_id = module.vpc.vpc_id
+  service_name = "com.amazonaws.${var.aws_region}.sts"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = module.vpc.private_subnets
+  security_group_ids = [module.vpc.default_security_group_id]
+  private_dns_enabled = true
+  tags = { Name = "${var.cluster_name}-sts-vpce" }
+}
 
 # ECR repo
 
@@ -93,38 +93,38 @@ resource "aws_ecr_repository" "app-ecr" {
 
 # # EKS Cluster (terraform-aws-modules/eks)
 
-# module "eks" {
-#   source = "terraform-aws-modules/eks/aws" 
-#   version = ">= 19.0.0"
-#   name = var.cluster_name
-#   kubernetes_version = "1.33"
-#   vpc_id = module.vpc.vpc_id
-#   subnet_ids = module.vpc.private_subnets
-#   eks_managed_node_groups = {
-#    example = {
-#      instance_types = ["t3.medium"]
-#      min_size       = 1
-#      max_size       = 3
-#      desired_size   = 2
-#    }
-#  }
+module "eks" {
+  source = "terraform-aws-modules/eks/aws" 
+  version = ">= 19.0.0"
+  name = var.cluster_name
+  kubernetes_version = "1.33"
+  vpc_id = module.vpc.vpc_id
+  subnet_ids = module.vpc.private_subnets
+  eks_managed_node_groups = {
+   example = {
+     instance_types = ["t3.medium"]
+     min_size       = 1
+     max_size       = 3
+     desired_size   = 2
+   }
+ }
 
-#   # Enable OIDC for IRSA  enable_irsa = true
-#   # node groups (managed) - spread across AZs by default  
-#   # node_groups = {
-#   #   default = {
-#   #     desired_capacity = var.node_desired_capacity
-#   #     max_capacity = var.node_desired_capacity + 1
-#   #     min_capacity = 1
-#   #     instance_types = [var.node_instance_type]
-#   #     key_name = "" 
-#   #     # optional: set your SSH key    
-#   #   }
-#   # }
-#   tags = {
-#     "Name" = "${var.cluster_name}-eks"
-#   }
-# }
+  # Enable OIDC for IRSA  enable_irsa = true
+  # node groups (managed) - spread across AZs by default  
+  # node_groups = {
+  #   default = {
+  #     desired_capacity = var.node_desired_capacity
+  #     max_capacity = var.node_desired_capacity + 1
+  #     min_capacity = 1
+  #     instance_types = [var.node_instance_type]
+  #     key_name = "" 
+  #     # optional: set your SSH key    
+  #   }
+  # }
+  tags = {
+    "Name" = "${var.cluster_name}-eks"
+  }
+}
 
 # RDS PostgreSQL (terraform-aws-modules/rds/aws)
 
@@ -153,24 +153,24 @@ module "rds" {
 
 # Security groups adjustments (allow EKS SG -> RDS)
 
-# # get EKS worker security group (created by module)
-# data "aws_security_group" "eks_nodes_sg" {
-#   id = module.eks.node_security_group_id
-# }
-# # Allow RDS to accept from EKS nodes SG
-# resource "aws_security_group_rule" "rds_allow_from_eks" {
-#   description = "Allow Postgres from EKS nodes"
-#   type = "ingress"
-#   from_port = 5432
-#   to_port = 5432
-#   protocol = "tcp"
-#   security_group_id = module.rds.security_group_id
-#   source_security_group_id = data.aws_security_group.eks_nodes_sg.id
-# }
+# get EKS worker security group (created by module)
+data "aws_security_group" "eks_nodes_sg" {
+  id = module.eks.node_security_group_id
+}
+# Allow RDS to accept from EKS nodes SG
+resource "aws_security_group_rule" "rds_allow_from_eks" {
+  description = "Allow Postgres from EKS nodes"
+  type = "ingress"
+  from_port = 5432
+  to_port = 5432
+  protocol = "tcp"
+  security_group_id = module.rds.security_group_id
+  source_security_group_id = data.aws_security_group.eks_nodes_sg.id
+}
 
-# # Outputs
+# Outputs
 
-output "vpc_id" {value = module.vpc.default_security_group_id}
+# output "vpc_id" {value = module.vpc.default_security_group_id}
 # output "eks_cluster_name" {value = module.eks.cluster_id}
 # output "eks_cluster_endpoint" {value = module.eks.cluster_endpoint}
 # output "rds_endpoint" {value = module.rds.address}
