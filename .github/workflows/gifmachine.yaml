@@ -27,7 +27,7 @@ jobs:
       DB_ADAPTER: ${{ secrets.DB_ADAPTER }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_HOST:  ${{ secrets.DB_HOST }}
+      DB_HOST:  'localhost'
       DB_NAME: ${{ secrets.DATABASE }}
       RACK_ENV: production
           
