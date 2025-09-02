@@ -29,6 +29,7 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_HOST:  ${{ secrets.DB_HOST }}
       DB_NAME: ${{ secrets.DATABASE }}
+      RACK_ENV: production
           
     steps:
       - name: Checkout repo
@@ -43,11 +44,6 @@ jobs:
       - name: Install dependencies
         working-directory: gifmachine
         run: bundle install
-
-      - name: Create database.yml
-        working-directory: gifmachine
-        run: |
-          mkdir config
 
       - name: Setup database
         working-directory: gifmachine
