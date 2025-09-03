@@ -126,6 +126,11 @@ jobs:
             pool: 5
             port: 5432
 
+          production:
+            <<: *default
+            database: ${{ secrets.DB_NAME }}
+          EOL
+
       - name: Build and push docker image to ecr
         working-directory: gifmachine
         env:
